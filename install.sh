@@ -56,11 +56,17 @@ sudo mkdir -p "$DATADIR"/{data,config}
 sudo chmod -Rf 777 "$DATADIR"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if [ -f "$INSTDIR/docker-compose.yml" ]; then
-  cd "$INSTDIR" && docker-compose up -d
+  printf_blue "Installing containers using docker compose"
+  sed -i "s|REPLACE_DATADIR|$DATADIR" "$INSTDIR/docker-compose.yml"
+  if cd "$INSTDIR"; then
+    sudo docker-compose pull &>/dev/null
+    sudo docker-compose up -d &>/dev/null
+  fi
 else
   if docker ps -a | grep "$APPNAME" >/dev/null 2>&1; then
-    sudo docker pull "$DOCKER_HUB_URL"
-    sudo docker restart "$APPNAME"
+    sudo docker rm "$APPNAME" -f &>/dev/null
+    sudo docker pull "$DOCKER_HUB_URL" &>/dev/null
+    sudo docker restart "$APPNAME" &>/dev/null
   else
     sudo docker run -d \
       --name "$APPNAME" \
@@ -73,7 +79,7 @@ else
   fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if docker ps -a | grep "$APPNAME" >/dev/null 2>&1; then
+if docker ps -a | grep -qs "$APPNAME"; then
   printf_green "Successfully setup daapd"
 else
   printf_return "Could not setup daapd"
