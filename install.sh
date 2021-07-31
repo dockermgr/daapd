@@ -44,29 +44,33 @@ __options "$@"
 # Begin installer
 APPNAME="daapd"
 DOCKER_HUB_URL="linuxserver/daapd"
-TIMEZONE="${TZ}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 APPDIR="${APPDIR:-/usr/local/share/CasjaysDev/$SCRIPTS_PREFIX/$APPNAME}"
 INSTDIR="${INSTDIR:-/usr/local/share/CasjaysDev/$SCRIPTS_PREFIX/$APPNAME}"
 DATADIR="${DATADIR:-/srv/docker/$APPNAME}"
 REPORAW="$REPO/raw/$GIT_DEFAULT_BRANCH"
 APPVERSION="$(__appversion "$REPORAW/version.txt")"
+TIMEZONE="${TZ:-$TIMEZONE}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 sudo mkdir -p "$DATADIR"/{data,config}
 sudo chmod -Rf 777 "$DATADIR"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-if docker ps -a | grep "$APPNAME" >/dev/null 2>&1; then
-  sudo docker pull "$DOCKER_HUB_URL"
-  sudo docker restart "$APPNAME"
+if [ -f "$INSTDIR/docker-compose.yml" ]; then
+  cd "$INSTDIR" && docker-compose up -d
 else
-  sudo docker run -d \
-    --name "$APPNAME" \
-    --hostname "$APPNAME" \
-    --net=host \
-    -e TZ=${TIMEZONE:-America/New_York} \
-    -v "$DATADIR/config":/config \
-    -v "$DATADIR/music":/music \
-    "$DOCKER_HUB_URL"
+  if docker ps -a | grep "$APPNAME" >/dev/null 2>&1; then
+    sudo docker pull "$DOCKER_HUB_URL"
+    sudo docker restart "$APPNAME"
+  else
+    sudo docker run -d \
+      --name "$APPNAME" \
+      --hostname "$APPNAME" \
+      --net=host \
+      -e TZ=${TIMEZONE:-America/New_York} \
+      -v "$DATADIR/config":/config \
+      -v "$DATADIR/music":/music \
+      "$DOCKER_HUB_URL"
+  fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if docker ps -a | grep "$APPNAME" >/dev/null 2>&1; then
