@@ -16,8 +16,8 @@ SRC_DIR="${BASH_SOURCE%/*}"
 # @ReadME        : dockermgr --help
 # @Copyright     : Copyright: (c) 2021 casjay, casjay
 # @Created       : Saturday, Jul 31, 2021 11:47 EDT
-# @File          : template
-# @Description   : Template for dockermgr
+# @File          : daapd
+# @Description   : daapd docker container installer
 # @TODO          :
 # @Other         :
 # @Resource      :
@@ -38,19 +38,21 @@ else
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # user system devenv dfmgr dockermgr fontmgr iconmgr pkmgr systemmgr thememgr wallpapermgr
-system_install
+dockermgr_install
 __options "$@"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Begin installer
-APPNAME="${APPNAME:-daapd}"
+APPNAME="daapd"
 DOCKER_HUB_URL="linuxserver/daapd"
-APPDIR="/usr/local/share/docker/$APPNAME"
-INSTDIR="/usr/local/share/CasjaysDev/$SCRIPTS_PREFIX/$APPNAME"
-DATADIR="/srv/docker/$APPNAME"
-REPORAW="$REPO/raw/$REPO_BRANCH"
+TIMEZONE="${TZ}"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+APPDIR="${APPDIR:-/usr/local/share/CasjaysDev/$SCRIPTS_PREFIX/$APPNAME}"
+INSTDIR="${INSTDIR:-/usr/local/share/CasjaysDev/$SCRIPTS_PREFIX/$APPNAME}"
+DATADIR="${DATADIR:-/srv/docker/$APPNAME}"
+REPORAW="$REPO/raw/$GIT_DEFAULT_BRANCH"
 APPVERSION="$(__appversion "$REPORAW/version.txt")"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-sudo mkdir -p "$DATADIR"/{config,music}
+sudo mkdir -p "$DATADIR"/{data,config}
 sudo chmod -Rf 777 "$DATADIR"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if docker ps -a | grep "$APPNAME" >/dev/null 2>&1; then
@@ -58,13 +60,19 @@ if docker ps -a | grep "$APPNAME" >/dev/null 2>&1; then
   sudo docker restart "$APPNAME"
 else
   sudo docker run -d \
-    --name="$APPNAME" \
+    --name "$APPNAME" \
     --hostname "$APPNAME" \
     --net=host \
-    -e TZ=America/New_York \
+    -e TZ=${TIMEZONE:-America/New_York} \
     -v "$DATADIR/config":/config \
     -v "$DATADIR/music":/music \
     "$DOCKER_HUB_URL"
+fi
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+if docker ps -a | grep "$APPNAME" >/dev/null 2>&1; then
+  printf_green "Successfully setup daapd"
+else
+  printf_return "Could not setup daapd"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # End script
