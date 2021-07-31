@@ -45,9 +45,9 @@ __options "$@"
 APPNAME="daapd"
 DOCKER_HUB_URL="linuxserver/daapd"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-APPDIR="${APPDIR:-/usr/local/share/CasjaysDev/$SCRIPTS_PREFIX/$APPNAME}"
-INSTDIR="${INSTDIR:-/usr/local/share/CasjaysDev/$SCRIPTS_PREFIX/$APPNAME}"
-DATADIR="${DATADIR:-/srv/docker/$APPNAME}"
+APPDIR="/usr/local/share/CasjaysDev/$SCRIPTS_PREFIX/$APPNAME"
+INSTDIR="/usr/local/share/CasjaysDev/$SCRIPTS_PREFIX/$APPNAME"
+DATADIR="/srv/docker/$APPNAME"
 REPORAW="$REPO/raw/$GIT_DEFAULT_BRANCH"
 APPVERSION="$(__appversion "$REPORAW/version.txt")"
 TIMEZONE="${TZ:-$TIMEZONE}"
@@ -83,7 +83,7 @@ fi
 if docker ps -a | grep -qs "$APPNAME"; then
   printf_blue "Service is available at: http://$HOSTNAME:3689"
 else
-  printf_return
+  false
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # End script
