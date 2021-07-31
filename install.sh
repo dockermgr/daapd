@@ -80,6 +80,7 @@ else
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if docker ps -a | grep -qs "$APPNAME"; then
+  printf_blue "Service is available at: http://$HOSTNAME:3689"
   printf_green "Successfully setup daapd"
 else
   printf_return "Could not setup daapd"
