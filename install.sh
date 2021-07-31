@@ -59,6 +59,7 @@ if [ -f "$INSTDIR/docker-compose.yml" ]; then
   printf_blue "Installing containers using docker compose"
   sed -i "s|REPLACE_DATADIR|$DATADIR" "$INSTDIR/docker-compose.yml"
   if cd "$INSTDIR"; then
+    sudo docker rm "$APPNAME" -f &>/dev/null
     sudo docker-compose pull &>/dev/null
     sudo docker-compose up -d &>/dev/null
   fi
@@ -75,15 +76,14 @@ else
       -e TZ=${TIMEZONE:-America/New_York} \
       -v "$DATADIR/config":/config \
       -v "$DATADIR/music":/music \
-      "$DOCKER_HUB_URL"
+      "$DOCKER_HUB_URL" &>/dev/null
   fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if docker ps -a | grep -qs "$APPNAME"; then
   printf_blue "Service is available at: http://$HOSTNAME:3689"
-  printf_green "Successfully setup daapd"
 else
-  printf_return "Could not setup daapd"
+  printf_return
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # End script
