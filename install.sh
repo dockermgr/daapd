@@ -68,8 +68,8 @@ APPVERSION="$(__appversion "$REPORAW/version.txt")"
 HUB_URL="linuxserver/daapd"
 SERVER_IP="${CURRIP4:-127.0.0.1}"
 SERVER_HOST="${APPNAME:-$(hostname -f 2>/dev/null)}"
-SERVER_PORT="${SERVER_PORT_INT:-3869}"
-SERVER_PORT_INT="${SERVER_PORT_INT:-3869}"
+SERVER_PORT="${SERVER_PORT_INT:-3689}"
+SERVER_PORT_INT="${SERVER_PORT_INT:-3689}"
 SERVER_PORT_ADMIN="${SERVER_PORT_SSL:-16000}"
 SERVER_PORT_ADMIN_INT="${SERVER_PORT_SSL_INT:-8080}"
 SERVER_PORT_OTHER="${SERVER_PORT_SSL:-15000}"
@@ -147,6 +147,7 @@ else
     -e TZ="$SERVER_TIMEZONE" \
     -v "$DATADIR/music":/music \
     -v "$DATADIR/config":/config \
+    -p $SERVER_PORT:$SERVER_PORT_INT \
     "$HUB_URL" &>/dev/null
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
