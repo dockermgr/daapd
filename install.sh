@@ -65,7 +65,7 @@ APPVERSION="$(__appversion "$REPORAW/version.txt")"
 # Setup plugins
 HUB_URL="linuxserver/daapd"
 SERVER_HOST="${APPNAME:-$(hostname -f 2>/dev/null)}"
-SERVER_PORT="${SERVER_PORT:-15001}"
+SERVER_PORT="${SERVER_PORT:-3689}"
 SERVER_PORT_INT="${SERVER_PORT_INT:-3689}"
 SERVER_PORT_SSL="${SERVER_PORT_SSL:-15100}"
 SERVER_PORT_SSL_INT="${SERVER_PORT_SSL_INT:-443}"
@@ -134,7 +134,7 @@ else
     ## SSL
   __sudo docker run -d \
     --name="$APPNAME" \
-    --hostname "$SERVER_HOST" \
+    --hostname "$APPNAME" \
     --restart=unless-stopped \
     --net=host \
     --privileged \
