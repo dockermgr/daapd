@@ -63,7 +63,7 @@ REPORAW="$REPO/raw/$REPO_BRANCH"
 APPVERSION="$(__appversion "$REPORAW/version.txt")"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Setup plugins
-HUB_URL="sudo systemctl status docker"
+HUB_URL="linuxserver/daapd"
 SERVER_HOST="${APPNAME:-$(hostname -f 2>/dev/null)}"
 SERVER_PORT="${SERVER_PORT:-15001}"
 SERVER_PORT_INT="${SERVER_PORT_INT:-3689}"
