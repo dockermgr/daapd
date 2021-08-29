@@ -46,8 +46,10 @@ user_installdirs
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Define extra functions
 __sudo() { if sudo -n true; then eval sudo "$*"; else eval "$*"; fi; }
-__enable_ssl() { [[ "$SERVER_SSL" = "yes" ]] && [[ "$SERVER_SSL" = "true" ]] && return 0 || return 1; }
+__sudo_root() { sudo -n true && ask_for_password true && eval sudo "$*" || return 1; }
 __ssl_certs() { [ -f "${1:-$SERVER_SSL_CRT}" ] && [ -f "${2:-SERVER_SSL_KEY}" ] && return 0 || return 1; }
+__enable_ssl() { { [[ "$SERVER_SSL" = "yes" ]] || [[ "$SERVER_SSL" = "true" ]]; } && return 0 || return 1; }
+__port_not_in_use() { [[ -d "/etc/nginx/vhosts.d" ]] && grep -Rsq "${1:-$SERVER_PORT}" /etc/nginx/vhosts.d && return 0 || return 1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Make sure the scripts repo is installed
 scripts_check
@@ -55,9 +57,9 @@ REPO_BRANCH="${GIT_REPO_BRANCH:-master}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Defaults
 APPNAME="daapd"
-APPDIR="$HOME/.local/share/docker/daapd"
-DATADIR="$HOME/.local/share/docker/daapd/files"
-INSTDIR="$HOME/.local/share/dockermgr/docker/daapd"
+APPDIR="$HOME/.local/share/srv/docker/daapd"
+DATADIR="$HOME/.local/share/srv/docker/daapd/files"
+INSTDIR="$HOME/.local/share/dockermgr/daapd"
 REPO="${DOCKERMGRREPO:-https://github.com/dockermgr}/daapd"
 REPORAW="$REPO/raw/$REPO_BRANCH"
 APPVERSION="$(__appversion "$REPORAW/version.txt")"
