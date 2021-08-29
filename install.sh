@@ -17,10 +17,10 @@ if [[ "$1" == "--debug" ]]; then shift 1 && set -xo pipefail && export SCRIPT_OP
 # @Copyright     : Copyright: (c) 2021 Jason Hempstead, Casjays Developments
 # @Created       : Saturday, Aug 28, 2021 20:20 EDT
 # @File          : daapd
-# @Description   : 
-# @TODO          : 
-# @Other         : 
-# @Resource      : 
+# @Description   : iTunes media server with support for AirPlay devices, Apple Remote (and compatibles), Chromecast, MPD and internet radio.
+# @TODO          :
+# @Other         :
+# @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Import functions
 CASJAYSDEVDIR="${CASJAYSDEVDIR:-/usr/local/share/CasjaysDev/scripts}"
@@ -132,29 +132,29 @@ else
   fi
   if __enable_ssl && __ssl_certs "$SERVER_SSL_CRT" "$SERVER_SSL_KEY"; then
     ## SSL
-  __sudo docker run -d \
-    --name="$APPNAME" \
-    --hostname "$APPNAME" \
-    --restart=unless-stopped \
-    --net=host \
-    --privileged \
-    -e TZ="$SERVER_TIMEZONE" \
-    -v "$DATADIR/data":/data:z \
-    -v "$DATADIR/music":/music \
-    -v "$DATADIR/config":/config \
-    "$HUB_URL" &>/dev/null
+    __sudo docker run -d \
+      --name="$APPNAME" \
+      --hostname "$APPNAME" \
+      --restart=unless-stopped \
+      --net=host \
+      --privileged \
+      -e TZ="$SERVER_TIMEZONE" \
+      -v "$DATADIR/data":/data:z \
+      -v "$DATADIR/music":/music \
+      -v "$DATADIR/config":/config \
+      "$HUB_URL" &>/dev/null
   else
-  __sudo docker run -d \
-    --name="$APPNAME" \
-    --hostname "$SERVER_HOST" \
-    --restart=unless-stopped \
-    --net=host \
-    --privileged \
-    -e TZ="$SERVER_TIMEZONE" \
-    -v "$DATADIR/data":/data:z \
-    -v "$DATADIR/music":/music \
-    -v "$DATADIR/config":/config \
-    "$HUB_URL" &>/dev/null
+    __sudo docker run -d \
+      --name="$APPNAME" \
+      --hostname "$SERVER_HOST" \
+      --restart=unless-stopped \
+      --net=host \
+      --privileged \
+      -e TZ="$SERVER_TIMEZONE" \
+      -v "$DATADIR/data":/data:z \
+      -v "$DATADIR/music":/music \
+      -v "$DATADIR/config":/config \
+      "$HUB_URL" &>/dev/null
   fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -182,4 +182,3 @@ run_exit
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # lets exit with code
 exit ${exitCode:-$?}
- 
