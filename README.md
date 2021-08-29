@@ -39,6 +39,7 @@ sudo docker run -d \
 --privileged \
 -e TZ="${TZ:-${TIMEZONE:-America/New_York}}" \
 -v "$HOME/.local/share/srv/docker/daapd/data":/data:z \
+-v "$HOME/.local/share/srv/docker/daapd/music":/music:z \
 -v "$HOME/.local/share/srv/docker/daapd/config":/config:z \
 -p PORT:INT_PORT \
 TEMPLATE/TEMPLATE 1>/dev/null

@@ -65,10 +65,12 @@ APPVERSION="$(__appversion "$REPORAW/version.txt")"
 # Setup plugins
 HUB_URL="linuxserver/daapd"
 SERVER_HOST="${APPNAME:-$(hostname -f 2>/dev/null)}"
-SERVER_PORT="${SERVER_PORT:-3689}"
-SERVER_PORT_INT="${SERVER_PORT_INT:-3689}"
-SERVER_PORT_SSL="${SERVER_PORT_SSL:-}"
-SERVER_PORT_SSL_INT="${SERVER_PORT_SSL_INT:-}"
+SERVER_PORT="${SERVER_PORT_INT:-3869}"
+SERVER_PORT_INT="${SERVER_PORT_INT:-3869}"
+SERVER_PORT_ADMIN="${SERVER_PORT_SSL:-16000}"
+SERVER_PORT_ADMIN_INT="${SERVER_PORT_SSL_INT:-8080}"
+SERVER_PORT_OTHER="${SERVER_PORT_SSL:-15000}"
+SERVER_PORT_OTHER_INT="${SERVER_PORT_SSL_INT:-443}"
 SERVER_TIMEZONE="${TZ:-${TIMEZONE:-America/New_York}}"
 SERVER_SSL="${SERVER_SSL:-false}"
 SERVER_SSL_CRT="/etc/ssl/CA/CasjaysDev/certs/localhost.crt"
@@ -130,32 +132,17 @@ else
     __sudo docker stop "$APPNAME" &>/dev/null
     __sudo docker rm -f "$APPNAME" &>/dev/null
   fi
-  if __enable_ssl && __ssl_certs "$SERVER_SSL_CRT" "$SERVER_SSL_KEY"; then
-    ## SSL
-    __sudo docker run -d \
-      --name="$APPNAME" \
-      --hostname "$APPNAME" \
-      --restart=unless-stopped \
-      --net=host \
-      --privileged \
-      -e TZ="$SERVER_TIMEZONE" \
-      -v "$DATADIR/data":/data:z \
-      -v "$DATADIR/music":/music \
-      -v "$DATADIR/config":/config \
-      "$HUB_URL" &>/dev/null
-  else
-    __sudo docker run -d \
-      --name="$APPNAME" \
-      --hostname "$SERVER_HOST" \
-      --restart=unless-stopped \
-      --net=host \
-      --privileged \
-      -e TZ="$SERVER_TIMEZONE" \
-      -v "$DATADIR/data":/data:z \
-      -v "$DATADIR/music":/music \
-      -v "$DATADIR/config":/config \
-      "$HUB_URL" &>/dev/null
-  fi
+  __sudo docker run -d \
+    --name="$APPNAME" \
+    --hostname "$SERVER_HOST" \
+    --restart=unless-stopped \
+    --net=host \
+    --privileged \
+    -e TZ="$SERVER_TIMEZONE" \
+    -v "$DATADIR/data":/data:z \
+    -v "$DATADIR/music":/music:z \
+    -v "$DATADIR/config":/config:z \
+    "$HUB_URL" &>/dev/null
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # run post install scripts
