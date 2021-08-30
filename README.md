@@ -42,7 +42,7 @@ sudo docker run -d \
 -v "$HOME/.local/share/srv/docker/daapd/music":/music:z \
 -v "$HOME/.local/share/srv/docker/daapd/config":/config:z \
 -p PORT:INT_PORT \
-TEMPLATE/TEMPLATE 1>/dev/null
+TEMPLATE/TEMPLATE &>/dev/null
 ```
 
 ## Author  
