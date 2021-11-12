@@ -157,6 +157,7 @@ else
     -v "$DATADIR/config":/config \
     -v "$DATADIR/data/music":/music \
     -v "$HOME/Music":/music/$USER \
+    -v /dev/snd:/dev/snd \
     "$HUB_URL" &>/dev/null
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
