@@ -70,9 +70,8 @@ NGINX_HTTP="${NGINX_HTTP:-80}"
 NGINX_HTTPS="${NGINX_HTTPS:-443}"
 SERVER_IP="${CURRIP4:-127.0.0.1}"
 SERVER_LISTEN="${SERVER_LISTEN:-$SERVER_IP}"
-NGINX_HTTP="${NGINX_HTTP:-80}"
-NGINX_HTTPS="${NGINX_HTTPS:-443}"
 SERVER_HOST="${APPNAME}.$(hostname -d 2>/dev/null | grep '^' || echo local)"
+SERVER_AUTH="true"
 SERVER_PORT="${SERVER_PORT_INT:-3689}"
 SERVER_PORT_INT="${SERVER_PORT_INT:-3689}"
 SERVER_PORT_ADMIN="${SERVER_PORT_ADMIN:-}"
@@ -109,10 +108,6 @@ dockermgr_run_init
 # Ensure directories exist
 ensure_dirs
 ensure_perms
-mkdir -p "$DATADIR/data"
-mkdir -p "$DATADIR/music"
-mkdir -p "$DATADIR/config"
-chmod -Rf 777 "$APPDIR"
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Clone/update the repo
@@ -134,6 +129,9 @@ if [[ -d "$INSTDIR/dataDir" ]] && [[ ! -f "$DATADIR/.installed" ]]; then
   cp -Rf "$INSTDIR/dataDir/." "$DATADIR/"
   touch "$DATADIR/.installed"
   find "$DATADIR" -name ".gitkeep" -type f -exec rm -rf {} \; &>/dev/null
+  mkdir -p "$DATADIR/data"
+  mkdir -p "$DATADIR/config"
+  chmod -Rf 777 "$APPDIR"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main progam
@@ -156,9 +154,9 @@ else
     --net=host \
     --privileged \
     -e TZ="$SERVER_TIMEZONE" \
-    -v "$HOME/Music":/music/$USER \
-    -v "$DATADIR/music":/music \
     -v "$DATADIR/config":/config \
+    -v "$DATADIR/data/music":/music \
+    -v "$HOME/Music":/music/$USER \
     "$HUB_URL" &>/dev/null
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -201,8 +199,12 @@ if docker ps -a | grep -qs "$APPNAME"; then
   printf_blue "DATADIR in $DATADIR"
   printf_cyan "Installed to $INSTDIR"
   [[ -n "$SERVER_PORT" ]] && printf_blue "Service is running on: $SERVER_IP:$SERVER_PORT"
-  [[ -n "$SERVER_PORT" ]] && printf_blue "and should be available at: http://$SERVER_LISTEN:$SERVER_WEB_PORT or http://$SERVER_HOST:$SERVER_WEB_PORT"
-  [[ -z "$SERVER_WEB_PORT" ]] && printf_yellow "This container does not have a web interface"
+  [[ -n "$SERVER_PORT" ]] && printf_blue "HTTP is available at: http://$SERVER_HOST:$SERVER_PORT"
+  [[ -n "$SERVER_PORT_OTHER" ]] && printf_blue "HTTPS is available at: https://$SERVER_HOST:$SERVER_PORT_OTHER"
+  [[ -n "$SERVER_PORT_INT" ]] && printf_blue "Admin is available at: http://$SERVER_HOST:$SERVER_PORT_INT"
+  [[ -n "$SERVER_AUTH" ]] && printf_yellow "Email: admin"
+  [[ -n "$SERVER_AUTH" ]] && printf_yellow "Password: changeme"
+  [[ -z "$SERVER_PORT" ]] && printf_yellow "This container does not have a web interface"
 else
   printf_error "Something seems to have gone wrong with the install"
 fi
