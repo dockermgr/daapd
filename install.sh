@@ -153,11 +153,11 @@ else
     --restart=unless-stopped \
     --net=host \
     --privileged \
+    --device /dev/snd \
     -e TZ="$SERVER_TIMEZONE" \
     -v "$DATADIR/config":/config \
     -v "$DATADIR/data/music":/music \
     -v "$HOME/Music":/music/$USER \
-    -v /dev/snd:/dev/snd \
     "$HUB_URL" &>/dev/null
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
